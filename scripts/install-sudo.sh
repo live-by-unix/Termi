@@ -17,46 +17,26 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Functions
-info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
+info() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 
-warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
-
-error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-    exit 1
-}
-
-# Check for uninstall flag
+# Uninstall
 if [ "$1" = "--remove" ] || [ "$1" = "uninstall" ]; then
     info "Uninstalling Termi (system-wide)..."
-    
     if [ -f "${INSTALL_DIR}/termi" ]; then
         sudo rm -f "${INSTALL_DIR}/termi"
         info "Removed binary from ${INSTALL_DIR}/termi"
     else
         warn "Termi binary not found in ${INSTALL_DIR}/termi"
     fi
-    
-    if [ -f "${HOME}/.shelloptions.termioptions" ]; then
-        rm -f "${HOME}/.shelloptions.termioptions"
-        info "Removed configuration file"
-    fi
-    
-    if [ -d "${HOME}/.term-plugins" ]; then
-        rm -rf "${HOME}/.term-plugins"
-        info "Removed plugins directory"
-    fi
-    
+    [ -f "${HOME}/.shelloptions.termioptions" ] && rm -f "${HOME}/.shelloptions.termioptions" && info "Removed configuration file"
+    [ -d "${HOME}/.term-plugins" ] && rm -rf "${HOME}/.term-plugins" && info "Removed plugins directory"
     info "Termi uninstalled successfully"
     exit 0
 fi
 
-# Check if running with sudo
+# Require sudo
 if [ "$EUID" -ne 0 ]; then
     if ! command -v sudo &> /dev/null; then
         error "This script requires sudo privileges, but sudo is not available"
@@ -64,41 +44,28 @@ if [ "$EUID" -ne 0 ]; then
     info "This script requires sudo privileges for system-wide installation"
 fi
 
-# Detect OS and architecture
+# Detect platform
 detect_platform() {
-    local os=""
-    local arch=""
-    
+    local os arch
     case "$(uname -s)" in
         Linux*)  os="linux" ;;
         Darwin*) os="darwin" ;;
-        CYGWIN*) os="windows" ;;
-        MINGW*)  os="windows" ;;
-        *)       error "Unsupported operating system: $(uname -s)" ;;
+        CYGWIN*|MINGW*) os="windows" ;;
+        *) error "Unsupported operating system: $(uname -s)" ;;
     esac
-    
     case "$(uname -m)" in
-        x86_64)  arch="amd64" ;;
-        aarch64) arch="arm64" ;;
-        arm64)   arch="arm64" ;;
-        i386)    arch="386" ;;
-        *)       error "Unsupported architecture: $(uname -m)" ;;
+        x86_64) arch="amd64" ;;
+        aarch64|arm64) arch="arm64" ;;
+        i386) arch="386" ;;
+        *) error "Unsupported architecture: $(uname -m)" ;;
     esac
-    
     echo "${os}-${arch}"
 }
 
-# Get download URL for a specific version
+# Get download URL
 get_download_url() {
-    local version="$1"
-    local platform="$2"
-    local ext=""
-
-    if [[ "$platform" == *"windows"* ]]; then
-        ext="zip"
-    else
-        ext="tar.gz"
-    fi
+    local version="$1" platform="$2" ext="tar.gz"
+    [[ "$platform" == *"windows"* ]] && ext="zip"
 
     local api_url
     if [ "$version" = "latest" ]; then
@@ -109,159 +76,103 @@ get_download_url() {
 
     info "Fetching release information from GitHub..."
     local response=$(curl -s "$api_url")
+    [ -z "$response" ] && error "Failed to fetch release information from GitHub"
 
-    if [ -z "$response" ]; then
-        error "Failed to fetch release information from GitHub"
-    fi
-
-    # Extract tag name
     local tag=$(echo "$response" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
 
-    # Build download URL using tag
     local download_url=$(echo "$response" | grep -o "\"browser_download_url\": \"[^\"]*termi-${tag}-${platform}.${ext}\"" | cut -d'"' -f4)
-
     if [ -z "$download_url" ]; then
-        # Fallback: match without version prefix
         download_url=$(echo "$response" | grep -o "\"browser_download_url\": \"[^\"]*${platform}.${ext}\"" | cut -d'"' -f4)
     fi
-
-    if [ -z "$download_url" ]; then
-        error "Could not find download URL for ${platform} with version ${version}"
-    fi
-
+    [ -z "$download_url" ] && error "Could not find download URL for ${platform} with version ${version}"
     echo "$download_url"
 }
 
 # Get checksum URL
 get_checksum_url() {
-    local version="$1"
-    
+    local version="$1" api_url
     if [ "$version" = "latest" ]; then
-        local api_url="${GITHUB_API}"
+        api_url="${GITHUB_API}"
     else
-        local api_url="https://api.github.com/repos/${REPO}/releases/tags/${version}"
+        api_url="https://api.github.com/repos/${REPO}/releases/tags/${version}"
     fi
-    
     local response=$(curl -s "$api_url")
-    local checksum_url=$(echo "$response" | grep -o "\"browser_download_url\": \"[^\"]*SHA256SUMS\"" | cut -d'"' -f4)
-    
-    echo "$checksum_url"
+    echo "$response" | grep -o "\"browser_download_url\": \"[^\"]*SHA256SUMS\"" | cut -d'"' -f4
 }
 
 # Verify checksum
 verify_checksum() {
-    local file="$1"
-    local checksum_file="$2"
-    
+    local file="$1" checksum_file="$2"
     info "Verifying SHA256 checksum..."
-    
-    if [ ! -f "$checksum_file" ]; then
-        error "Checksum file not found: $checksum_file"
-    fi
-    
-    local computed_checksum=$(sha256sum "$file" | awk '{print $1}')
-    local expected_checksum=$(grep "$(basename "$file")" "$checksum_file" | awk '{print $1}')
-    
-    if [ -z "$expected_checksum" ]; then
-        warn "Could not find checksum for $(basename "$file") in checksum file"
+    [ ! -f "$checksum_file" ] && error "Checksum file not found: $checksum_file"
+    local computed=$(sha256sum "$file" | awk '{print $1}')
+    local expected=$(grep "$(basename "$file")" "$checksum_file" | awk '{print $1}')
+    if [ -z "$expected" ]; then
+        warn "No checksum entry for $(basename "$file")"
         return 0
     fi
-    
-    if [ "$computed_checksum" = "$expected_checksum" ]; then
+    if [ "$computed" = "$expected" ]; then
         info "Checksum verification passed"
-        return 0
     else
-        error "Checksum verification failed"
-        echo "Expected: $expected_checksum"
-        echo "Computed: $computed_checksum"
-        return 1
+        error "Checksum verification failed (expected $expected, got $computed)"
     fi
 }
 
-# Main installation
+# Main
 main() {
     info "Termi Installer (System-Wide with Sudo)"
     info "======================================="
-    
-    # Check for required commands
+
     for cmd in curl sha256sum; do
-        if ! command -v "$cmd" &> /dev/null; then
-            error "Required command not found: $cmd"
-        fi
+        command -v "$cmd" &> /dev/null || error "Required command not found: $cmd"
     done
-    
-    # Detect platform
+
     local platform=$(detect_platform)
     info "Detected platform: $platform"
-    
-    # Get download URL
+
     local download_url=$(get_download_url "$VERSION" "$platform")
     info "Download URL: $download_url"
-    
-    # Create temp directory
+
     local tmp_dir=$(mktemp -d)
     trap "rm -rf $tmp_dir" EXIT
-    
-    # Download file
+
     local filename=$(basename "$download_url")
     local filepath="${tmp_dir}/${filename}"
-    
+
     info "Downloading ${filename}..."
     curl -fsSL "$download_url" -o "$filepath"
-    
-    if [ ! -f "$filepath" ]; then
-        error "Failed to download file"
-    fi
-    
-    # Download checksum
+    [ ! -f "$filepath" ] && error "Failed to download file"
+
     local checksum_url=$(get_checksum_url "$VERSION")
     if [ -n "$checksum_url" ]; then
         local checksum_file="${tmp_dir}/SHA256SUMS"
         info "Downloading checksums..."
         curl -fsSL "$checksum_url" -o "$checksum_file"
-        
-        if [ -f "$checksum_file" ]; then
-            verify_checksum "$filepath" "$checksum_file"
-        fi
+        [ -f "$checksum_file" ] && verify_checksum "$filepath" "$checksum_file"
     else
         warn "Checksum file not found, skipping verification"
     fi
-    
-    # Extract file
+
     info "Extracting archive..."
     cd "$tmp_dir"
-    
     if [[ "$filename" == *.zip ]]; then
         unzip -q "$filename"
     else
         tar -xzf "$filename"
     fi
-    
-    # Find the binary
+
     local binary=$(find "$tmp_dir" -type f -name "termi" -o -name "termi.exe" | head -n 1)
-    
-    if [ -z "$binary" ]; then
-        error "Could not find termi binary in archive"
-    fi
-    
-    # Install binary with sudo
+    [ -z "$binary" ] && error "Could not find termi binary in archive"
+
     info "Installing Termi to ${INSTALL_DIR} (requires sudo)..."
     sudo cp "$binary" "${INSTALL_DIR}/termi"
     sudo chmod +x "${INSTALL_DIR}/termi"
-    
-    # Verify installation
-    if [ ! -f "${INSTALL_DIR}/termi" ]; then
-        error "Installation failed"
-    fi
-    
+
+    [ ! -f "${INSTALL_DIR}/termi" ] && error "Installation failed"
+
     info "Installation successful!"
-    info ""
     info "Termi has been installed to: ${INSTALL_DIR}/termi"
-    info ""
-    info "The binary is now available system-wide for all users."
-    info ""
-    info "Run 'termi --version' to verify the installation."
-    info ""
+    info "Run 'termi --version' to verify."
     info "To uninstall, run: sudo $0 --remove"
 }
 
