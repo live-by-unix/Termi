@@ -93,38 +93,42 @@ get_download_url() {
     local version="$1"
     local platform="$2"
     local ext=""
-    
+
     if [[ "$platform" == *"windows"* ]]; then
         ext="zip"
     else
         ext="tar.gz"
     fi
-    
+
+    local api_url
     if [ "$version" = "latest" ]; then
-        local api_url="${GITHUB_API}"
+        api_url="${GITHUB_API}"
     else
-        local api_url="https://api.github.com/repos/${REPO}/releases/tags/${version}"
+        api_url="https://api.github.com/repos/${REPO}/releases/tags/${version}"
     fi
-    
+
     info "Fetching release information from GitHub..."
     local response=$(curl -s "$api_url")
-    
+
     if [ -z "$response" ]; then
         error "Failed to fetch release information from GitHub"
     fi
-    
-    # Extract download URL
-    local download_url=$(echo "$response" | grep -o "\"browser_download_url\": \"[^\"]*termi-${version}-${platform}.${ext}\"" | cut -d'"' -f4)
-    
+
+    # Extract tag name
+    local tag=$(echo "$response" | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+
+    # Build download URL using tag
+    local download_url=$(echo "$response" | grep -o "\"browser_download_url\": \"[^\"]*termi-${tag}-${platform}.${ext}\"" | cut -d'"' -f4)
+
     if [ -z "$download_url" ]; then
-        # Try without version prefix in filename
+        # Fallback: match without version prefix
         download_url=$(echo "$response" | grep -o "\"browser_download_url\": \"[^\"]*${platform}.${ext}\"" | cut -d'"' -f4)
     fi
-    
+
     if [ -z "$download_url" ]; then
         error "Could not find download URL for ${platform} with version ${version}"
     fi
-    
+
     echo "$download_url"
 }
 
