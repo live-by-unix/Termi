@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termi - Next-Generation Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Termi</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#install">Install</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-icon">🚀</span>
+                <span class="badge-text">Version 1.0.0 Now Available</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="gradient-text">Next-Generation</span>
+                <br>
+                Terminal Experience
+            </h1>
+            <p class="hero-description">
+                A modern terminal application with plugin support, runtime interpreter selection, 
+                and dual launch modes. Built for developers who demand excellence.
+            </p>
+            <div class="hero-buttons">
+                <a href="#install" class="btn btn-primary">
+                    <span>Get Started</span>
+                    <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/live-by-unix/termi" class="btn btn-secondary">
+                    <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    <span>GitHub</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Core Features</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Platforms</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <div class="stat-value">MIT</div>
+                    <div class="stat-label">License</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <span class="terminal-btn close"></span>
+                        <span class="terminal-btn minimize"></span>
+                        <span class="terminal-btn maximize"></span>
+                    </div>
+                    <div class="terminal-title">termi — bash</div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="prompt">user@termi:~$</span>
+                        <span class="command">termi --version</span>
+                    </div>
+                    <div class="terminal-line output">
+                        <span>Termi v1.0.0</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="prompt">user@termi:~$</span>
+                        <span class="command">termi</span>
+                    </div>
+                    <div class="terminal-line output">
+                        <span>Available shell interpreters:</span>
+                    </div>
+                    <div class="terminal-line output">
+                        <span>1. bash (/usr/bin/bash)</span>
+                    </div>
+                    <div class="terminal-line output">
+                        <span>2. zsh (/usr/bin/zsh)</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="prompt">user@termi:~$</span>
+                        <span class="cursor">▋</span>
+                    </div>
+                </div>
+            </div>
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Everything you need for a superior terminal experience</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <h3>Plugin System</h3>
+                    <p>Extensible architecture with `.term-plugins/` directory. Execute custom scripts at launch for unlimited customization.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3>Ubuntu-Style Terminal</h3>
+                    <p>Out-of-the-box terminal with color highlighting, command execution, and familiar usability patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3>Runtime Selection</h3>
+                    <p>Interactive menu to select from all available shells. Type numbers or custom paths for quick switching.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                    </div>
+                    <h3>Persistent Config</h3>
+                    <p>Save your preferred shell in `shelloptions.termioptions`. Use `#ignoreoption` to temporarily override.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                    </div>
+                    <h3>Dual Launch Modes</h3>
+                    <p>Launch as GUI application or embed directly in your shell. Automatic detection with manual override.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Secure & Verified</h3>
+                    <p>All releases include SHA256 checksums. Installers verify integrity before installation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="demo">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">See It In Action</h2>
+                <p class="section-subtitle">Experience the power of Termi</p>
+            </div>
+            <div class="demo-content">
+                <div class="demo-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <span class="terminal-btn close"></span>
+                            <span class="terminal-btn minimize"></span>
+                            <span class="terminal-btn maximize"></span>
+                        </div>
+                        <div class="terminal-title">termi — zsh</div>
+                    </div>
+                    <div class="terminal-body" id="demoTerminal">
+                        <div class="terminal-line">
+                            <span class="prompt">user@termi:~$</span>
+                            <span class="command">mkdir -p ~/.term-plugins</span>
+                        </div>
+                        <div class="terminal-line output">
+                            <span class="success">✓ Plugin directory created</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="prompt">user@termi:~$</span>
+                            <span class="command">cat > ~/.term-plugins/welcome.sh</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="prompt">user@termi:~$</span>
+                            <span class="command">chmod +x ~/.term-plugins/welcome.sh</span>
+                        </div>
+                        <div class="terminal-line output">
+                            <span class="success">✓ Plugin made executable</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="prompt">user@termi:~$</span>
+                            <span class="command">termi</span>
+                        </div>
+                        <div class="terminal-line output">
+                            <span class="plugin-output">🎉 Welcome to Termi!</span>
+                        </div>
+                        <div class="terminal-line output">
+                            <span class="plugin-output">📅 Current date: 2026-07-28</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="prompt">user@termi:~$</span>
+                            <span class="cursor">▋</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="install" class="install">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Easy Installation</h2>
+                <p class="section-subtitle">Get up and running in seconds</p>
+            </div>
+            <div class="install-methods">
+                <div class="install-card active" data-method="no-sudo">
+                    <div class="install-header">
+                        <div class="install-icon">🏠</div>
+                        <h3>No Sudo Required</h3>
+                        <p>Install to your home directory without root privileges</p>
+                    </div>
+                    <div class="install-code">
+                        <code>curl -fsSL https://raw.githubusercontent.com/live-by-unix/termi/main/scripts/install-no-sudo.sh | bash</code>
+                        <button class="copy-btn" data-copy="no-sudo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="install-card" data-method="sudo">
+                    <div class="install-header">
+                        <div class="install-icon">🔒</div>
+                        <h3>System-Wide Install</h3>
+                        <p>Install system-wide with sudo for all users</p>
+                    </div>
+                    <div class="install-code">
+                        <code>curl -fsSL https://raw.githubusercontent.com/live-by-unix/termi/main/scripts/install-sudo.sh | sudo bash</code>
+                        <button class="copy-btn" data-copy="sudo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="install-card" data-method="manual">
+                    <div class="install-header">
+                        <div class="install-icon">📦</div>
+                        <h3>Manual Install</h3>
+                        <p>Download pre-built binaries for your platform</p>
+                    </div>
+                    <div class="install-code">
+                        <code>wget https://github.com/live-by-unix/termi/releases/latest/download/termi-linux-amd64.tar.gz</code>
+                        <button class="copy-btn" data-copy="manual">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="install-platforms">
+                <h4>Supported Platforms</h4>
+                <div class="platform-tags">
+                    <span class="platform-tag">Linux AMD64</span>
+                    <span class="platform-tag">Linux ARM64</span>
+                    <span class="platform-tag">macOS Intel</span>
+                    <span class="platform-tag">macOS Apple Silicon</span>
+                    <span class="platform-tag">Windows AMD64</span>
+                    <span class="platform-tag">Windows ARM64</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">About Termi</h2>
+                    <p class="about-description">
+                        Termi is a next-generation terminal application built with Go, designed for developers who need more from their terminal experience. Created by LIVE-BY-UNIX in 2026, Termi combines modern design with powerful features.
+                    </p>
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <div class="about-feature-icon">⚡</div>
+                            <div class="about-feature-text">
+                                <h4>Fast & Lightweight</h4>
+                                <p>Built with Go for maximum performance</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="about-feature-icon">🔧</div>
+                            <div class="about-feature-text">
+                                <h4>Highly Extensible</h4>
+                                <p>Plugin system for unlimited customization</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="about-feature-icon">🌍</div>
+                            <div class="about-feature-text">
+                                <h4>Cross-Platform</h4>
+                                <p>Works on Linux, macOS, and Windows</p>
+                            </div>
+                        </div>
+                        <div class="about-feature">
+                            <div class="about-feature-icon">📖</div>
+                            <div class="about-feature-text">
+                                <h4>Well Documented</h4>
+                                <p>Comprehensive docs and examples</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual">
+                    <div class="code-preview">
+                        <div class="code-header">
+                            <span>main.go</span>
+                        </div>
+                        <pre><code><span class="keyword">package</span> main
+
+<span class="keyword">import</span> (
+    <span class="string">"github.com/live-by-unix/termi/internal/config"</span>
+    <span class="string">"github.com/live-by-unix/termi/internal/plugins"</span>
+)
+
+<span class="keyword">func</span> <span class="function">main</span>() {
+    <span class="comment">// Initialize configuration</span>
+    cfg, _ := config.<span class="function">Load</span>()
+    
+    <span class="comment">// Execute plugins</span>
+    plugins.<span class="function">Execute</span>(pluginDir)
+    
+    <span class="comment">// Launch terminal</span>
+    terminal.<span class="function">Launch</span>(cfg.ShellPath)
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <span class="logo-icon">⚡</span>
+                        <span class="logo-text">Termi</span>
+                    </div>
+                    <p>Next-generation terminal experience for developers.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4>Product</h4>
+                        <ul>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#install">Installation</a></li>
+                            <li><a href="https://github.com/live-by-unix/termi/releases">Releases</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="https://github.com/live-by-unix/termi/blob/main/docs">Documentation</a></li>
+                            <li><a href="https://github.com/live-by-unix/termi/blob/main/examples">Examples</a></li>
+                            <li><a href="https://github.com/live-by-unix/termi/issues">Issues</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Community</h4>
+                        <ul>
+                            <li><a href="https://github.com/live-by-unix/termi">GitHub</a></li>
+                            <li><a href="https://github.com/live-by-unix/termi/blob/main/CONTRIBUTING.md">Contributing</a></li>
+                            <li><a href="https://github.com/live-by-unix/termi/blob/main/LICENSE">License</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LIVE-BY-UNIX. MIT License. Built with ❤️ for the terminal community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
