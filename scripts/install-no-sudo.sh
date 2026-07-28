@@ -3,59 +3,44 @@ set -e
 
 # Termi Installer (No Sudo)
 # Installs Termi to ~/.local/bin without requiring sudo privileges
-# Author: LIVE-BY-UNIX
-# Year: 2026
 
 INSTALL_DIR="${HOME}/.local/bin"
-BASE_URL="https://github.com/live-by-unix/Termi/releases/download/v1.0.0-stable-tested"
 VERSION="1.0.0"
+BASE_URL="https://github.com/live-by-unix/Termi/releases/download/v1.0.0-stable-tested"
 
-# Colors
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
-info(){ echo -e "${GREEN}[INFO]${NC} $1"; }
-warn(){ echo -e "${YELLOW}[WARN]${NC} $1"; }
-error(){ echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
+info(){ echo "[INFO] $1"; }
+error(){ echo "[ERROR] $1"; exit 1; }
 
 # Uninstall
 if [[ "$1" == "--remove" || "$1" == "uninstall" ]]; then
-    info "Uninstalling Termi..."
-    rm -f "${INSTALL_DIR}/termi" && info "Removed binary"
-    rm -f "${HOME}/.shelloptions.termioptions" && info "Removed config"
-    rm -rf "${HOME}/.term-plugins" && info "Removed plugins"
-    info "Termi uninstalled successfully"; exit 0
+    rm -f "${INSTALL_DIR}/termi"
+    rm -f "${HOME}/.shelloptions.termioptions"
+    rm -rf "${HOME}/.term-plugins"
+    echo "[INFO] Termi uninstalled successfully"
+    exit 0
 fi
 
-# Detect platform
-detect_platform(){
+detect_url(){
     case "$(uname -s)-$(uname -m)" in
-        Linux-x86_64)   echo "linux-amd64" ;;
-        Linux-aarch64)  echo "linux-arm64" ;;
-        Darwin-x86_64)  echo "darwin-amd64" ;;
-        Darwin-arm64)   echo "darwin-arm64" ;;
-        MINGW*|CYGWIN*) echo "windows-amd64" ;;
+        Linux-x86_64)   echo "${BASE_URL}/termi-${VERSION}-linux-amd64.tar.gz" ;;
+        Linux-aarch64)  echo "${BASE_URL}/termi-${VERSION}-linux-arm64.tar.gz" ;;
+        Darwin-x86_64)  echo "${BASE_URL}/termi-${VERSION}-darwin-amd64.tar.gz" ;;
+        Darwin-arm64)   echo "${BASE_URL}/termi-${VERSION}-darwin-arm64.tar.gz" ;;
+        MINGW*|CYGWIN*) echo "${BASE_URL}/termi-${VERSION}-windows-amd64.zip" ;;
         *) error "Unsupported platform: $(uname -s)-$(uname -m)" ;;
     esac
 }
 
 main(){
-    info "Termi Installer (No Sudo)"
-    info "========================="
-
-    local platform=$(detect_platform)
-    local filename="termi-${VERSION}-${platform}"
-    [[ "$platform" == windows* ]] && filename="${filename}.zip" || filename="${filename}.tar.gz"
-    local url="${BASE_URL}/${filename}"
-
-    info "Detected platform: $platform"
-    info "Download URL: $url"
-
+    local url=$(detect_url)
+    local filename=$(basename "$url")
     local tmp_dir=$(mktemp -d); trap "rm -rf $tmp_dir" EXIT
     local filepath="${tmp_dir}/${filename}"
 
     info "Downloading ${filename}..."
     curl -fsSL "$url" -o "$filepath" || error "Download failed"
 
-    info "Extracting archive..."
+    info "Extracting..."
     cd "$tmp_dir"
     [[ "$filename" == *.zip ]] && unzip -q "$filename" || tar -xzf "$filename"
 
@@ -66,11 +51,7 @@ main(){
     cp "$binary" "${INSTALL_DIR}/termi"
     chmod +x "${INSTALL_DIR}/termi"
 
-    info "Installation successful!"
-    info "Termi installed at: ${INSTALL_DIR}/termi"
-    info "Ensure ${INSTALL_DIR} is in your PATH"
-    info "Run 'termi --version' to verify"
-    info "To uninstall, run: $0 --remove"
+    info "Installation successful at ${INSTALL_DIR}/termi"
 }
 
 main "$@"

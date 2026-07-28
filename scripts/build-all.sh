@@ -3,17 +3,14 @@ set -e
 
 # Termi Build Script
 # Builds release binaries for all platforms
-# Author: LIVE-BY-UNIX
-# Year: 2026
 
 VERSION="1.0.0"
 REPO_NAME="termi"
 BUILD_DIR="$(pwd)/releases"
 SOURCE_DIR="$(pwd)"
 
-GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
-info(){ echo -e "${GREEN}[INFO]${NC} $1"; }
-warn(){ echo -e "${YELLOW}[WARN]${NC} $1"; }
+info(){ echo "[INFO] $1"; }
+warn(){ echo "[WARN] $1"; }
 
 mkdir -p "$BUILD_DIR"
 
@@ -53,4 +50,8 @@ build "linux" "amd64" "tar.gz"
 build "linux" "arm64" "tar.gz"
 build "darwin" "amd64" "tar.gz"
 build "darwin" "arm64" "tar.gz"
-build "windows" "amd64" "zip
+build "windows" "amd64" "zip"
+build "windows" "arm64" "zip"
+
+info "=========================================="
+info "Build complete! Artifacts and checksums in ${BUILD_DIR}"
