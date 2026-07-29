@@ -5,8 +5,8 @@ set -e
 # Installs Termi system-wide to /usr/local/bin
 
 INSTALL_DIR="/usr/local/bin"
-VERSION="1.1.1"
-BASE_URL="https://github.com/live-by-unix/Termi/releases/download/v1.1.1-stable-tested"
+VERSION="1.0.0"
+BASE_URL="https://github.com/live-by-unix/Termi/releases/download/v1.0.0-stable-tested"
 
 info(){ echo "[INFO] $1"; }
 error(){ echo "[ERROR] $1"; exit 1; }
