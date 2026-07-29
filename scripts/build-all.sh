@@ -4,7 +4,7 @@ set -e
 # Termi Build Script
 # Builds release binaries for all platforms
 
-VERSION="1.0.0"
+VERSION="1.1.1"
 REPO_NAME="termi"
 BUILD_DIR="$(pwd)/releases"
 SOURCE_DIR="$(pwd)"
