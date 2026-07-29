@@ -34,28 +34,42 @@ Termi provides an out-of-the-box terminal experience with:
 - Support for common terminal features
 
 ### 3. Runtime Interpreter Selection
-Termi automatically scans for all available shell interpreters on your system and presents them in an interactive menu:
+Termi automatically scans for all available shell interpreters on your system and presents them in an interactive menu with arrow key navigation:
 
 ```
 Available shell interpreters:
 ============================
-1. bash (/usr/bin/bash)
-2. zsh (/usr/bin/zsh)
-3. fish (/usr/bin/fish)
-4. dash (/usr/bin/dash)
 
-Select a shell by number, or enter a custom path:
-> 
+> bash (/usr/bin/bash)
+  zsh (/usr/bin/zsh)
+  fish (/usr/bin/fish)
+  dash (/usr/bin/dash)
+
+Use ↑/↓ arrows to navigate, Enter to select, or type custom path
 ```
 
-You can select by number or type a custom path directly. Termi detects shells from:
+**Features:**
+- **Arrow Key Navigation:** Use ↑/↓ arrows to navigate through available shells
+- **Visual Highlighting:** Selected shell is highlighted in green for easy identification
+- **Custom Path Support:** Type any custom shell path directly
+- **Fallback Mode:** If arrow keys don't work in your terminal, falls back to number-based selection
+
+Termi detects shells from:
 - Standard system paths (`/bin`, `/usr/bin`)
 - Homebrew installations on macOS (`/opt/homebrew/bin`, `/usr/local/bin`)
 - Your system's PATH environment variable
 - Windows-specific paths (Git Bash, PowerShell, CMD)
 
-### 4. Persistent Shell Preference
-Termi remembers your preferred shell interpreter via the `~/.shelloptions.termioptions` configuration file. Simply set your preferred shell path in this file:
+### 4. Shell Selection Behavior
+Termi always displays the shell selection menu on launch (unless you specify `--shell` flag). This allows you to choose your preferred shell each time. Your selection is saved to `~/.shelloptions.termioptions` for reference, but the menu will still appear on subsequent launches.
+
+To bypass the menu and use a specific shell directly, use the `--shell` flag:
+
+```bash
+termi --shell /usr/bin/zsh
+```
+
+The configuration file `~/.shelloptions.termioptions` stores your last selection for reference:
 
 ```bash
 # ~/.shelloptions.termioptions

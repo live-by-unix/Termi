@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"golang.org/x/term"
 )
 
 // Shell represents a detected shell interpreter
@@ -122,19 +124,83 @@ func isExecutable(path string) bool {
 	return !info.IsDir()
 }
 
-// PromptSelection displays a menu for shell selection and returns the chosen path
+// PromptSelection displays an interactive menu for shell selection with arrow key navigation
 func PromptSelection(shells []Shell) string {
 	if len(shells) == 0 {
 		return ""
 	}
 
+	// Put terminal in raw mode for interactive input
+	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	if err != nil {
+		// Fall back to simple input if raw mode fails
+		return simplePromptSelection(shells)
+	}
+	defer term.Restore(int(os.Stdin.Fd()), oldState)
+
+	selectedIndex := 0
+
+	for {
+		// Clear screen and redraw menu
+		clearScreen()
+		fmt.Println("Available shell interpreters:")
+		fmt.Println("============================")
+		fmt.Println()
+
+		for i, shell := range shells {
+			if i == selectedIndex {
+				// Highlight selected item
+				fmt.Printf("\033[1;32m> %s (%s)\033[0m\n", shell.Name, shell.Path)
+			} else {
+				fmt.Printf("  %s (%s)\n", shell.Name, shell.Path)
+			}
+		}
+
+		fmt.Println()
+		fmt.Println("Use ↑/↓ arrows to navigate, Enter to select, or type custom path")
+
+		// Read single character
+		buf := make([]byte, 1)
+		_, err := os.Stdin.Read(buf)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
+			term.Restore(int(os.Stdin.Fd()), oldState)
+			return simplePromptSelection(shells)
+		}
+
+		switch buf[0] {
+		case 65: // Up arrow
+			if selectedIndex > 0 {
+				selectedIndex--
+			}
+		case 66: // Down arrow
+			if selectedIndex < len(shells)-1 {
+				selectedIndex++
+			}
+		case 13: // Enter
+			term.Restore(int(os.Stdin.Fd()), oldState)
+			return shells[selectedIndex].Path
+		case 27: // Escape sequence start
+			// Read the rest of the escape sequence
+			os.Stdin.Read(buf)
+			os.Stdin.Read(buf)
+		default:
+			// If user types a regular character, switch to text input mode
+			term.Restore(int(os.Stdin.Fd()), oldState)
+			return textPromptSelection(shells)
+		}
+	}
+}
+
+// simplePromptSelection is the fallback simple number-based selection
+func simplePromptSelection(shells []Shell) string {
 	fmt.Println("Available shell interpreters:")
 	fmt.Println("============================")
-	
+
 	for i, shell := range shells {
 		fmt.Printf("%d. %s (%s)\n", i+1, shell.Name, shell.Path)
 	}
-	
+
 	fmt.Println("\nSelect a shell by number, or enter a custom path:")
 	fmt.Print("> ")
 
@@ -146,7 +212,7 @@ func PromptSelection(shells []Shell) string {
 	}
 
 	input = strings.TrimSpace(input)
-	
+
 	// Check if input is a number
 	var selection int
 	if _, err := fmt.Sscanf(input, "%d", &selection); err == nil {
@@ -155,7 +221,7 @@ func PromptSelection(shells []Shell) string {
 			return shells[selection-1].Path
 		}
 		fmt.Println("Invalid selection")
-		return PromptSelection(shells)
+		return simplePromptSelection(shells)
 	}
 
 	// Treat as custom path
@@ -164,10 +230,52 @@ func PromptSelection(shells []Shell) string {
 			return input
 		}
 		fmt.Printf("Path '%s' is not executable\n", input)
-		return PromptSelection(shells)
+		return simplePromptSelection(shells)
 	}
 
 	return ""
+}
+
+// textPromptSelection allows typing a custom path after arrow navigation
+func textPromptSelection(shells []Shell) string {
+	fmt.Println("\nSelect a shell by number, or enter a custom path:")
+	fmt.Print("> ")
+
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
+		return ""
+	}
+
+	input = strings.TrimSpace(input)
+
+	// Check if input is a number
+	var selection int
+	if _, err := fmt.Sscanf(input, "%d", &selection); err == nil {
+		// Number selection
+		if selection >= 1 && selection <= len(shells) {
+			return shells[selection-1].Path
+		}
+		fmt.Println("Invalid selection")
+		return textPromptSelection(shells)
+	}
+
+	// Treat as custom path
+	if input != "" {
+		if isExecutable(input) {
+			return input
+		}
+		fmt.Printf("Path '%s' is not executable\n", input)
+		return textPromptSelection(shells)
+	}
+
+	return ""
+}
+
+// clearScreen clears the terminal screen
+func clearScreen() {
+	fmt.Print("\033[2J\033[H")
 }
 
 // Validate checks if a shell path is valid and executable

@@ -57,13 +57,9 @@ func main() {
 
 	// Determine shell to use
 	selectedShell := *shellPath
-	if selectedShell == "" {
-		if cfg.ShellPath != "" && !cfg.IgnoreOption {
-			selectedShell = cfg.ShellPath
-		}
-	}
 
-	// If no shell specified, show selection menu
+	// Always show selection menu unless --shell flag is provided
+	// This ensures users can choose their shell each time
 	if selectedShell == "" {
 		shells, err := shell.DetectAvailable()
 		if err != nil {
@@ -82,7 +78,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		// Save selection to config
+		// Save selection to config for reference, but won't auto-use next time
 		cfg.ShellPath = selectedShell
 		if err := config.Save(cfg); err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: Could not save config: %v\n", err)
