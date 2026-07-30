@@ -6,7 +6,7 @@ set -e
 
 INSTALL_DIR="/usr/local/bin"
 VERSION="1.1.1"
-BASE_URL="https://github.com/live-by-unix/Termi/releases/download/v1.0.0-stable-tested"
+BASE_URL="https://github.com/live-by-unix/Termi/releases/download/v1.1.1-stable-tested"
 
 info(){ echo "[INFO] $1"; }
 error(){ echo "[ERROR] $1"; exit 1; }
